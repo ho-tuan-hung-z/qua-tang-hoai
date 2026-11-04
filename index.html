@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quà cho Hoài 🎁</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#ffe4ec; --bg2:#fff4d9;
+    --box:#ff6b8b; --box-dark:#e04e70; --ribbon:#ffd23f;
+    --tea:#c99a6b; --tea-dark:#a87a4f; --pearl:#3b2418;
+    --ink:#4a2a35;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:'Baloo 2',system-ui,sans-serif;color:var(--ink);
+    background:radial-gradient(circle at 20% 20%,var(--bg2),var(--bg1) 60%);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    overflow:hidden;text-align:center;padding:16px;
+  }
+  h1{font-size:clamp(1.6rem,6vw,2.6rem);font-weight:800;line-height:1.1}
+  .sub{font-size:clamp(1rem,4vw,1.25rem);opacity:.8;margin-top:6px}
+  .stage{position:relative;width:260px;height:300px;margin-top:28px}
+
+  /* ---------- Gift box ---------- */
+  .gift{position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+    width:200px;height:170px;cursor:pointer;z-index:3;
+    animation:wiggle 2.2s ease-in-out infinite}
+  .gift .body{position:absolute;bottom:0;width:100%;height:130px;
+    background:var(--box);border-radius:10px;box-shadow:inset 0 -14px 0 var(--box-dark)}
+  .gift .body::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:30px;
+    transform:translateX(-50%);background:var(--ribbon)}
+  .gift .lid{position:absolute;bottom:122px;left:-10px;width:220px;height:44px;
+    background:var(--box);border-radius:10px;box-shadow:inset 0 -8px 0 var(--box-dark);
+    transition:transform .9s cubic-bezier(.3,1.5,.5,1),opacity .9s}
+  .gift .lid::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:30px;
+    transform:translateX(-50%);background:var(--ribbon)}
+  .bow{position:absolute;left:50%;top:-34px;transform:translateX(-50%);width:90px;height:40px}
+  .bow i{position:absolute;top:0;width:44px;height:36px;border:9px solid var(--ribbon);border-radius:50% 50% 10% 50%}
+  .bow i:first-child{left:0;transform:rotate(-20deg)}
+  .bow i:last-child{right:0;transform:scaleX(-1) rotate(-20deg)}
+  .hint{margin-top:18px;font-size:1.05rem;opacity:.75;animation:pulse 1.6s infinite}
+
+  .opened .gift{animation:none;cursor:default}
+  .opened .gift .lid{transform:translate(120px,-260px) rotate(50deg);opacity:0}
+  .opened .gift .body{animation:sink .8s .5s forwards}
+  .opened .hint{display:none}
+
+  /* ---------- Bubble tea ---------- */
+  .tea{position:absolute;left:50%;bottom:40px;width:140px;transform:translate(-50%,40px) scale(.3);
+    opacity:0;z-index:2;transition:all 1s cubic-bezier(.2,1.4,.4,1) .35s}
+  .opened .tea{transform:translate(-50%,-10px) scale(1);opacity:1;z-index:4}
+  .tea svg{width:100%;overflow:visible;filter:drop-shadow(0 10px 12px rgba(0,0,0,.15))}
+  .tea .float{animation:float 3s ease-in-out 1.5s infinite}
+
+  /* ---------- Message / voucher ---------- */
+  .msg{max-width:360px;margin-top:20px;opacity:0;transform:translateY(20px);
+    transition:all .7s ease 1.2s;pointer-events:none}
+  .opened .msg{opacity:1;transform:none;pointer-events:auto}
+  .voucher{background:#fff;border:3px dashed var(--box);border-radius:16px;padding:14px 18px;
+    box-shadow:0 8px 24px rgba(224,78,112,.18)}
+  .voucher b{display:block;font-size:1.5rem;color:var(--box-dark)}
+  .voucher small{opacity:.7}
+  .note{margin-top:12px;font-size:1.05rem}
+
+  /* ---------- Confetti ---------- */
+  .confetti{position:fixed;top:-10px;width:10px;height:14px;z-index:10;pointer-events:none;
+    animation:fall linear forwards}
+
+  @keyframes wiggle{0%,80%,100%{transform:translateX(-50%) rotate(0)}84%{transform:translateX(-50%) rotate(-5deg)}88%{transform:translateX(-50%) rotate(5deg)}92%{transform:translateX(-50%) rotate(-3deg)}96%{transform:translateX(-50%) rotate(3deg)}}
+  @keyframes pulse{50%{opacity:.35}}
+  @keyframes sink{to{transform:translateY(40px) scale(.9);opacity:.0}}
+  @keyframes float{50%{transform:translateY(-8px) rotate(2deg)}}
+  @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+  @keyframes bob{50%{transform:translateY(-3px)}}
+</style>
+</head>
+<body>
+  <h1 id="title">Hà Thu Hoài ơi,<br>có quà nè! 🎀</h1>
+  <p class="sub" id="sub">Bấm vào hộp quà để mở nhé</p>
+
+  <div class="stage" id="stage">
+    <div class="tea"><div class="float">
+      <svg viewBox="0 0 140 220" aria-label="Cốc trà sữa trân châu">
+        <!-- straw -->
+        <rect x="78" y="-30" width="14" height="110" rx="6" fill="#ff8fab" transform="rotate(12 85 40)"/>
+        <!-- lid dome -->
+        <path d="M14 58 Q70 8 126 58 Z" fill="#ffffffcc" stroke="#e8d6dc" stroke-width="3"/>
+        <rect x="8" y="56" width="124" height="12" rx="6" fill="#fff" stroke="#e8d6dc" stroke-width="3"/>
+        <!-- cup -->
+        <path d="M16 68 L124 68 L110 210 Q70 218 30 210 Z" fill="#fff8f2" stroke="#e8d6dc" stroke-width="3"/>
+        <!-- tea -->
+        <path d="M20 92 L120 92 L110 206 Q70 213 30 206 Z" fill="var(--tea)"/>
+        <path d="M20 92 Q45 100 70 92 T120 92" fill="none" stroke="#e7c39e" stroke-width="5"/>
+        <!-- label -->
+        <rect x="34" y="112" width="72" height="34" rx="10" fill="#fff" opacity=".92"/>
+        <text x="70" y="135" text-anchor="middle" font-family="Baloo 2" font-weight="800" font-size="17" fill="#e04e70">FREE</text>
+        <!-- pearls -->
+        <g fill="var(--pearl)">
+          <circle cx="40" cy="194" r="7"/><circle cx="56" cy="198" r="7"/><circle cx="72" cy="196" r="7"/>
+          <circle cx="88" cy="198" r="7"/><circle cx="102" cy="192" r="7"/><circle cx="48" cy="182" r="7"/>
+          <circle cx="64" cy="184" r="7"/><circle cx="80" cy="182" r="7"/><circle cx="95" cy="178" r="7"/>
+          <circle cx="58" cy="170" r="7"/><circle cx="84" cy="168" r="7"/>
+        </g>
+        <!-- face -->
+        <g style="animation:bob 2s infinite">
+          <circle cx="54" cy="162" r="4" fill="#3b2418"/><circle cx="86" cy="162" r="4" fill="#3b2418"/>
+          <path d="M62 166 Q70 174 78 166" fill="none" stroke="#3b2418" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="44" cy="168" r="5" fill="#ff8fab" opacity=".6"/><circle cx="96" cy="168" r="5" fill="#ff8fab" opacity=".6"/>
+        </g>
+      </svg>
+    </div></div>
+
+    <div class="gift" id="gift" role="button" aria-label="Mở hộp quà" tabindex="0">
+      <div class="lid"><div class="bow"><i></i><i></i></div></div>
+      <div class="body"></div>
+    </div>
+  </div>
+  <p class="hint">👆 chạm vào đây</p>
+
+  <div class="msg">
+    <div class="voucher">
+      <small>PHIẾU QUÀ TẶNG</small>
+      <b>1 cốc trà sữa FREE 🧋</b>
+      <small>Dành riêng cho: <strong>Hà Thu Hoài</strong> · Hạn dùng: khi nào thèm thì gọi</small>
+    </div>
+    <p class="note">Chúc Hoài luôn vui vẻ, ngọt ngào như trà sữa full topping nha! 💕</p>
+  </div>
+
+<script>
+  const gift = document.getElementById('gift');
+  const colors = ['#ff6b8b','#ffd23f','#7bdff2','#b2f7ef','#c99a6b','#ff8fab'];
+
+  function confetti(n = 120){
+    for(let i=0;i<n;i++){
+      const c = document.createElement('div');
+      c.className = 'confetti';
+      c.style.left = Math.random()*100 + 'vw';
+      c.style.background = colors[i % colors.length];
+      c.style.borderRadius = Math.random() > .5 ? '50%' : '2px';
+      c.style.animationDuration = 2 + Math.random()*2.5 + 's';
+      c.style.animationDelay = Math.random()*.6 + 's';
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 5500);
+    }
+  }
+
+  function openGift(){
+    if (document.body.classList.contains('opened')) return;
+    document.body.classList.add('opened');
+    document.getElementById('title').innerHTML = 'Tadaaa! 🎉';
+    document.getElementById('sub').textContent = 'Quà của Hoài là…';
+    confetti();
+  }
+  gift.addEventListener('click', openGift);
+  gift.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openGift(); });
+</script>
+</body>
+</html>
