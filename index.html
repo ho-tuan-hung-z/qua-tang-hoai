@@ -65,6 +65,30 @@
   .voucher small{opacity:.7}
   .note{margin-top:12px;font-size:1.05rem}
 
+  /* ---------- Puzzle ---------- */
+  .puzzle{display:none;width:100%;max-width:380px;margin-top:22px;background:#fff;border-radius:20px;
+    padding:20px 18px;box-shadow:0 10px 30px rgba(224,78,112,.18)}
+  .locked .puzzle{display:block}
+  .locked .stage,.locked .hint,.locked .msg{display:none}
+  .puzzle h2{font-size:1.2rem;color:var(--box-dark)}
+  .puzzle p{font-size:1rem;opacity:.85}
+  .seq{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:16px 0}
+  .seq span{min-width:44px;padding:8px 6px;border-radius:12px;background:var(--bg1);
+    font-weight:800;font-size:1.3rem}
+  .seq span.q{background:var(--ribbon);animation:pulse 1.6s infinite}
+  .row{display:flex;gap:8px}
+  .row input{flex:1;min-width:0;font:inherit;font-size:1.2rem;padding:10px 12px;border-radius:12px;
+    border:2px solid #f3c3cf;outline:none;text-align:center}
+  .row input:focus{border-color:var(--box)}
+  .btn{font:inherit;font-weight:700;font-size:1.05rem;border:0;border-radius:12px;padding:10px 16px;
+    background:var(--box);color:#fff;cursor:pointer}
+  .btn.ghost{background:none;color:var(--box-dark);text-decoration:underline;padding:6px;margin-top:10px}
+  .feedback{min-height:1.5em;margin-top:10px;font-weight:700}
+  .hints{margin-top:6px;text-align:left}
+  .hints li{margin:6px 0 0 18px;font-size:.98rem}
+  .shake{animation:shake .4s}
+  @keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+
   /* ---------- Confetti ---------- */
   .confetti{position:fixed;top:-10px;width:10px;height:14px;z-index:10;pointer-events:none;
     animation:fall linear forwards}
@@ -77,9 +101,25 @@
   @keyframes bob{50%{transform:translateY(-3px)}}
 </style>
 </head>
-<body>
+<body class="locked">
   <h1 id="title">Hà Thu Hoài ơi,<br>có quà nè! 🎀</h1>
-  <p class="sub" id="sub">Bấm vào hộp quà để mở nhé</p>
+  <p class="sub" id="sub">Nhưng hộp quà đang bị khoá 🔒 Giải đố mới mở được nha 😏</p>
+
+  <div class="puzzle" id="puzzle">
+    <h2>🧩 Tìm số tiếp theo</h2>
+    <p>Dãy số này có một quy luật. Số nào thay vào dấu <b>?</b></p>
+    <div class="seq">
+      <span>1</span><span>4</span><span>9</span><span>61</span>
+      <span>52</span><span>63</span><span>94</span><span class="q">?</span>
+    </div>
+    <form class="row" id="answerForm" autocomplete="off">
+      <input id="answer" type="text" inputmode="numeric" placeholder="Đáp án…" aria-label="Đáp án">
+      <button class="btn" type="submit">Mở khoá</button>
+    </form>
+    <div class="feedback" id="feedback"></div>
+    <ul class="hints" id="hints"></ul>
+    <button class="btn ghost" id="hintBtn" type="button">Xin gợi ý 🥺</button>
+  </div>
 
   <div class="stage" id="stage">
     <div class="tea"><div class="float">
@@ -154,6 +194,47 @@
     document.getElementById('sub').textContent = 'Quà của Hoài là…';
     confetti();
   }
+  // ---------- Puzzle ----------
+  const expected = String(8 * 8).split('').reverse().join('');
+  const hints = [
+    'Mấy số đầu trông quen quen… nhưng từ số thứ 4 thì có gì đó "lộn ngược" 🙃',
+    'Thử đọc mỗi số từ phải sang trái xem: 61 → 16, 52 → 25…',
+    '1, 4, 9, 16, 25, 36, 49… là bình phương của 1, 2, 3, 4… đó!',
+  ];
+  const wrongMsgs = ['Chưa đúng rồi 😝', 'Gần rồi… chắc vậy 🤔', 'Sai nữa rồi kìa 🫣', 'Bình tĩnh, uống ngụm nước rồi nghĩ tiếp 💧'];
+  let hintIdx = 0, wrong = 0;
+  const fb = document.getElementById('feedback');
+  const puzzle = document.getElementById('puzzle');
+  const hintBtn = document.getElementById('hintBtn');
+
+  function showHint(){
+    if (hintIdx >= hints.length) return;
+    const li = document.createElement('li');
+    li.textContent = hints[hintIdx++];
+    document.getElementById('hints').appendChild(li);
+    if (hintIdx >= hints.length) hintBtn.style.display = 'none';
+  }
+  hintBtn.addEventListener('click', showHint);
+
+  document.getElementById('answerForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const val = document.getElementById('answer').value.trim();
+    if (!val) return;
+    if (val === expected){
+      fb.style.color = '#2a9d5c';
+      fb.textContent = 'Chuẩn luôn! 🎉 Hộp quà đã mở khoá…';
+      setTimeout(() => {
+        document.body.classList.remove('locked');
+        document.getElementById('sub').textContent = 'Giỏi ghê! Giờ bấm vào hộp quà để mở nhé 🎁';
+      }, 1200);
+    } else {
+      fb.style.color = '#e04e70';
+      fb.textContent = wrongMsgs[wrong++ % wrongMsgs.length];
+      puzzle.classList.remove('shake'); void puzzle.offsetWidth; puzzle.classList.add('shake');
+      if (wrong % 3 === 0) showHint();   // tự tặng gợi ý sau mỗi 3 lần sai
+    }
+  });
+
   gift.addEventListener('click', openGift);
   gift.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openGift(); });
 </script>
